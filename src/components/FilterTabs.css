@@ -1,0 +1,35 @@
+.filter-tabs {
+    margin: 20px 0;
+}
+
+.filter-tabs h3 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.filter-tabs__container {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.filter-tabs__tab {
+    padding: 8px 16px;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.filter-tabs__tab:hover {
+    background: #e9ecef;
+}
+
+.filter-tabs__tab--active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}

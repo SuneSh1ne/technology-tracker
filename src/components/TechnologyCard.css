@@ -1,0 +1,76 @@
+.technology-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border-left: 4px solid;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.technology-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.technology-card--not-started {
+    border-left-color: #ff6b6b;
+}
+
+.technology-card--in-progress {
+    border-left-color: #45b7d1;
+}
+
+.technology-card--completed {
+    border-left-color: #4ecd59;
+}
+
+.technology-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.technology-card__title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.technology-card__status-icon {
+    font-size: 1.2rem;
+}
+
+.technology-card__description {
+    margin: 0 0 10px 0;
+    color: #666;
+    line-height: 1.4;
+}
+
+.technology-card__footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.technology-card__status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.technology-card__status--not-started {
+    background: #ffe3e3;
+    color: #c92a2a;
+}
+
+.technology-card__status--in-progress {
+    background: #d0ebff;
+    color: #1971c2;
+}
+
+.technology-card__status--completed {
+    background: #d3f9d8;
+    color: #2b8a3e;
+}
