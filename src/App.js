@@ -42,7 +42,7 @@ function App() {
             description: 'Долгий тяжкий ручной труд',
             status: 'in-progress',
             notes: ''
-        },
+        }
     ]);
 
     useEffect(() => {
@@ -128,13 +128,14 @@ function App() {
         <div className="App">
             <header className="App-header">
                 <h1>Трекер изучения технологий</h1>
-                <ProgressHeader technologies={technologies} />
+                <ProgressHeader technologies={technologies}/>
             </header>
             <main className="App-main">
                 <QuickActions
                     onMarkAllCompleted={markAllAsCompleted}
                     onResetAll={resetAllStatuses}
                     onRandomNext={randomNextTechnology}
+                    handleExport={technologies}
                 />
 
                 <div className="search-box">
