@@ -11,8 +11,16 @@ function QuickActions({ onMarkAllCompleted, onResetAll, onRandomNext, technologi
             technologies: technologies
         };
         const dataStr = JSON.stringify(data, null, 2);
-        // Здесь можно добавить логику для скачивания файла
-        console.log('Данные для экспорта:', dataStr);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `tech-tracker-export-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
         setShowExportModal(true);
     };
 
@@ -44,19 +52,19 @@ function QuickActions({ onMarkAllCompleted, onResetAll, onRandomNext, technologi
                 >
                     📤 Экспорт данных
                 </button>
-
-                <Modal
-                    isOpen={showExportModal}
-                    onClose={() => setShowExportModal(false)}
-                    title="Экспорт данных"
-                >
-                    <p>Данные успешно подготовлены для экспорта!</p>
-                    <p>Проверьте консоль разработчика для просмотра данных.</p>
-                    <button onClick={() => setShowExportModal(false)}>
-                        Закрыть
-                    </button>
-                </Modal>
             </div>
+
+            <Modal
+                isOpen={showExportModal}
+                onClose={() => setShowExportModal(false)}
+                title="Экспорт данных"
+            >
+                <p>Данные успешно экспортированы!</p>
+                <p>Файл был скачан в формате JSON.</p>
+                <button className="quick-actions__button" onClick={() => setShowExportModal(false)}>
+                    Закрыть
+                </button>
+            </Modal>
         </div>
     );
 }

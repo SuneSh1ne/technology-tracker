@@ -1,102 +1,34 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css';
 import TechnologyCard from './components/TechnologyCard';
-import ProgressHeader from './components/ProgressHeader';
+import ProgressBar from './components/ProgressBar';
 import QuickActions from './components/QuickActions';
 import FilterTabs from './components/FilterTabs';
 import TechnologyNotes from './components/TechnologyNotes';
+import useTechnologies from './hooks/useTechnologies';
 
 function App() {
-    const [technologies, setTechnologies] = useState([
-        {
-            id: 1,
-            title: 'React Components',
-            description: 'Изучение базовых компонентов',
-            status: 'completed',
-            notes: ''
-        },
-        {
-            id: 2,
-            title: 'JSX Syntax',
-            description: 'Освоение синтаксиса JSX',
-            status: 'in-progress',
-            notes: ''
-        },
-        {
-            id: 3,
-            title: 'State Management',
-            description: 'Работа с состоянием компонентов',
-            status: 'not-started',
-            notes: ''
-        },
-        {
-            id: 4,
-            title: 'React Hooks',
-            description: 'Изучение основных хуков: useState, useEffect',
-            status: 'not-started',
-            notes: ''
-        },
-        {
-            id: 5,
-            title: 'Отклеить этикетки от бананов',
-            description: 'Долгий тяжкий ручной труд',
-            status: 'in-progress',
-            notes: ''
-        }
-    ]);
-
-    useEffect(() => {
-        const saved = localStorage.getItem('techTrackerData');
-        if (saved) {
-            setTechnologies(JSON.parse(saved));
-            console.log('Данные загружены из localStorage');
-        }
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('techTrackerData', JSON.stringify(technologies));
-        console.log('Данные сохранены в localStorage');
-    }, [technologies]);
-
-    const updateTechnologyNotes = (techId, newNotes) => {
-        setTechnologies(prevTech => 
-            prevTech.map(tech => 
-                tech.id === techId ? { ...tech, notes: newNotes } : tech
-            )
-        );
-    };
-
-    const updateTechnologyStatus = (id) => {
-        setTechnologies(prevTech => prevTech.map(tech => {
-            if (tech.id === id) {
-                const statusOrder = ['not-started', 'in-progress', 'completed'];
-                const currentIndex = statusOrder.indexOf(tech.status);
-                const nextIndex = (currentIndex + 1) % statusOrder.length;
-                return { ...tech, status: statusOrder[nextIndex] };
-            }
-            return tech;
-        }));
-    };
+    const { technologies, updateStatus, updateNotes, progress } = useTechnologies();
 
     const markAllAsCompleted = () => {
-        setTechnologies(prevTech => prevTech.map(tech => ({
-            ...tech,
-            status: 'completed'
-        })));
+        technologies.forEach(tech => {
+            if (tech.status !== 'completed') {
+                updateStatus(tech.id, 'completed');
+            }
+        });
     };
 
     const resetAllStatuses = () => {
-        setTechnologies(prevTech => prevTech.map(tech => ({
-            ...tech,
-            status: 'not-started'
-        })));
+        technologies.forEach(tech => {
+            updateStatus(tech.id, 'not-started');
+        });
     };
 
     const randomNextTechnology = () => {
         const notStartedTech = technologies.filter(tech => tech.status === 'not-started');
         if (notStartedTech.length > 0) {
             const randomTech = notStartedTech[Math.floor(Math.random() * notStartedTech.length)];
-            updateTechnologyStatus(randomTech.id);
+            updateStatus(randomTech.id, 'in-progress');
         } else {
             alert('Все технологии уже начаты или завершены!');
         }
@@ -128,14 +60,20 @@ function App() {
         <div className="App">
             <header className="App-header">
                 <h1>Трекер изучения технологий</h1>
-                <ProgressHeader technologies={technologies}/>
+                <ProgressBar
+                    progress={progress}
+                    label="Общий прогресс"
+                    color="#4CAF50"
+                    animated={true}
+                    height={20}
+                />
             </header>
             <main className="App-main">
                 <QuickActions
                     onMarkAllCompleted={markAllAsCompleted}
                     onResetAll={resetAllStatuses}
                     onRandomNext={randomNextTechnology}
-                    handleExport={technologies}
+                    technologies={technologies}
                 />
 
                 <div className="search-box">
@@ -162,11 +100,16 @@ function App() {
                                     title={tech.title}
                                     description={tech.description}
                                     status={tech.status}
-                                    onStatusChange={updateTechnologyStatus}
+                                    onStatusChange={(id) => {
+                                        const statusOrder = ['not-started', 'in-progress', 'completed'];
+                                        const currentIndex = statusOrder.indexOf(tech.status);
+                                        const nextIndex = (currentIndex + 1) % statusOrder.length;
+                                        updateStatus(id, statusOrder[nextIndex]);
+                                    }}
                                 />
                                 <TechnologyNotes
                                     notes={tech.notes}
-                                    onNotesChange={updateTechnologyNotes}
+                                    onNotesChange={updateNotes}
                                     techId={tech.id}
                                 />
                         </div>

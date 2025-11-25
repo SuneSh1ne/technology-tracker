@@ -6,60 +6,76 @@ const initialTechnologies = [
         title: 'React Components',
         description: 'Изучение базовых компонентов',
         status: 'completed',
-        notes: ''
+        notes: '',
+        category: 'frontend'
     },
     {
         id: 2,
         title: 'JSX Syntax',
         description: 'Освоение синтаксиса JSX',
         status: 'in-progress',
-        notes: ''
+        notes: '',
+        category: 'frontend'
     },
     {
         id: 3,
         title: 'State Management',
         description: 'Работа с состоянием компонентов',
         status: 'not-started',
-        notes: ''
+        notes: '',
+        category: 'frontend'
     },
     {
         id: 4,
         title: 'React Hooks',
         description: 'Изучение основных хуков: useState, useEffect',
         status: 'not-started',
-        notes: ''
+        notes: '',
+        category: 'frontend'
     },
     {
         id: 5,
         title: 'Отклеить этикетки от бананов',
         description: 'Долгий тяжкий ручной труд',
         status: 'in-progress',
-        notes: ''
+        notes: '',
+        category: 'backend'
     }
 ];
 
 function useTechnologies() {
     const [technologies, setTechnologies] = useLocalStorage('technologies', initialTechnologies);
 
-    // Функция для обновления статуса технологии
     const updateStatus = (techId, newStatus) => {
-        setTechnologies(prev => 
-            prev.map(tech => 
+        setTechnologies(prev =>
+            prev.map(tech =>
                 tech.id === techId ? { ...tech, status: newStatus } : tech
             )
         );
     };
 
-    // Функция для обновления заметок
     const updateNotes = (techId, newNotes) => {
-        setTechnologies(prev => 
-            prev.map(tech => 
+        setTechnologies(prev =>
+            prev.map(tech =>
                 tech.id === techId ? { ...tech, notes: newNotes } : tech
             )
         );
     };
 
-    // Функция для расчета общего прогресса
+    const addTechnology = (technology) => {
+        const newTechnology = {
+            id: Date.now(),
+            ...technology,
+            status: 'not-started',
+            notes: ''
+        };
+        setTechnologies(prev => [...prev, newTechnology]);
+    };
+
+    const deleteTechnology = (id) => {
+        setTechnologies(prev => prev.filter(tech => tech.id !== id));
+    };
+
     const calculateProgress = () => {
         if (technologies.length === 0) return 0;
         const completed = technologies.filter(tech => tech.status === 'completed').length;
@@ -68,8 +84,11 @@ function useTechnologies() {
 
     return {
         technologies,
+        setTechnologies,
         updateStatus,
         updateNotes,
+        addTechnology,
+        deleteTechnology,
         progress: calculateProgress()
     };
 }
