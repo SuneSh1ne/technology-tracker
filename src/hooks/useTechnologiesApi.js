@@ -182,7 +182,11 @@ function useTechnologiesApi() {
             id: Date.now(),
             ...technology,
             status: 'not-started',
-            notes: ''
+            notes: '',
+            createdAt: new Date().toISOString(),
+            difficulty: technology.difficulty || 'beginner',
+            deadline: technology.deadline || '',
+            resources: technology.resources || []
         };
         setTechnologies(prev => [...prev, newTechnology]);
     }, [setTechnologies]);

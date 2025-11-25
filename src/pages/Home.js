@@ -4,8 +4,11 @@ import ProgressHeader from '../components/ProgressHeader';
 import QuickActions from '../components/QuickActions';
 import TechnologyCard from '../components/TechnologyCard';
 import RoadmapImporter from '../components/RoadmapImporter';
+import { useApp } from '../contexts/AppContext';
 
 function Home({ technologies, progress, updateStatus, onImportTechnology, apiData, loading, error }) {
+    const { showSnackbar } = useApp();
+
     const safeTechnologies = technologies || [];
     const recentTechnologies = safeTechnologies.slice(0, 6);
     const inProgressTech = safeTechnologies.filter(tech => tech.status === 'in-progress');
@@ -13,9 +16,24 @@ function Home({ technologies, progress, updateStatus, onImportTechnology, apiDat
     const handleAddFromApi = async (techData) => {
         try {
             await onImportTechnology(techData);
-            alert(`Технология "${techData.title}" успешно добавлена в трекер!`);
+            showSnackbar(`Технология "${techData.title}" успешно добавлена в трекер!`, 'success');
         } catch (err) {
-            alert(`Ошибка при добавлении: ${err.message}`);
+            showSnackbar(`Ошибка при добавлении: ${err.message}`, 'error');
+        }
+    };
+
+    const handleStatusChange = (techId, newStatus) => {
+        updateStatus(techId, newStatus);
+
+        const tech = safeTechnologies.find(t => t.id === techId);
+        if (tech) {
+            const statusMessages = {
+                'not-started': `Изучение "${tech.title}" начато!`,
+                'in-progress': `"${tech.title}" отмечена как завершённая! 🎉`,
+                'completed': `Статус "${tech.title}" сброшен`
+            };
+
+            showSnackbar(statusMessages[newStatus], 'info');
         }
     };
 
@@ -28,12 +46,11 @@ function Home({ technologies, progress, updateStatus, onImportTechnology, apiDat
 
             <QuickActions />
 
-            {/* Импортер дорожных карт на главной */}
             <RoadmapImporter onImport={onImportTechnology} />
 
             {inProgressTech.length > 0 && (
                 <section className="section">
-                    <h2>В процессе изучения</h2>
+                    <h2>🚀 В процессе изучения</h2>
                     <div className="technologies-grid">
                         {inProgressTech.map(tech => (
                             <TechnologyCard
@@ -42,7 +59,7 @@ function Home({ technologies, progress, updateStatus, onImportTechnology, apiDat
                                 title={tech.title}
                                 description={tech.description}
                                 status={tech.status}
-                                onStatusChange={updateStatus}
+                                onStatusChange={handleStatusChange}
                             />
                         ))}
                     </div>
@@ -51,7 +68,7 @@ function Home({ technologies, progress, updateStatus, onImportTechnology, apiDat
 
             <section className="section">
                 <div className="section-header">
-                    <h2>Недавние технологии</h2>
+                    <h2>📚 Недавние технологии</h2>
                     <Link to="/technologies" className="btn-link">
                         Все технологии →
                     </Link>
@@ -64,16 +81,23 @@ function Home({ technologies, progress, updateStatus, onImportTechnology, apiDat
                             title={tech.title}
                             description={tech.description}
                             status={tech.status}
-                            onStatusChange={updateStatus}
+                            onStatusChange={handleStatusChange}
                         />
                     ))}
                 </div>
+                {recentTechnologies.length === 0 && (
+                    <div className="empty-state">
+                        <p>Пока нет технологий. Добавьте первую!</p>
+                        <Link to="/add-technology" className="btn btn-primary">
+                            ➕ Добавить технологию
+                        </Link>
+                    </div>
+                )}
             </section>
 
-            {/* Пример данных из API */}
             {apiData && apiData.length > 0 && (
                 <section className="section">
-                    <h2>📚 Доступные технологии из API</h2>
+                    <h2>🌟 Доступные технологии из API</h2>
                     <p className="section-description">
                         Эти технологии можно добавить в ваш трекер одним кликом
                     </p>

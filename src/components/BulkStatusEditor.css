@@ -1,0 +1,152 @@
+/* BulkStatusEditor.css */
+.bulk-status-editor {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.bulk-status-editor h3 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.25rem;
+}
+
+.bulk-controls {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.status-selector {
+    flex: 1;
+    min-width: 200px;
+}
+
+.status-selector label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #333;
+}
+
+.status-selector select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #e1e5e9;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.apply-button {
+    padding: 10px 20px;
+    white-space: nowrap;
+}
+
+.apply-button:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+}
+
+.selection-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.select-all-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.technologies-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e1e5e9;
+    border-radius: 4px;
+}
+
+.tech-item {
+    padding: 12px;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.tech-item:last-child {
+    border-bottom: none;
+}
+
+.tech-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.tech-checkbox input[type="checkbox"] {
+    margin-top: 2px;
+}
+
+.tech-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.current-status {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: #ecf0f1;
+    color: #666;
+    align-self: flex-start;
+}
+
+.status-not-started {
+    background: #ffeaa7;
+    color: #856404;
+}
+
+.status-in-progress {
+    background: #aed6f1;
+    color: #154360;
+}
+
+.status-completed {
+    background: #a3e4d7;
+    color: #0b5345;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Стиль для indeterminate состояния checkbox */
+input[type="checkbox"]:indeterminate {
+    background: #3498db;
+    border-color: #3498db;
+}
+
+@media (max-width: 768px) {
+    .bulk-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .status-selector {
+        min-width: auto;
+    }
+}

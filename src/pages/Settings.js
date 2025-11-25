@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
+import { FormControlLabel, Switch, Box, Typography } from '@mui/material';
+import { useApp } from '../contexts/AppContext';
 import './Settings.css';
 
 function Settings() {
+    const { themeMode, toggleTheme, showSnackbar } = useApp();
+
     const handleExportData = () => {
         const technologies = JSON.parse(localStorage.getItem('technologies') || '[]');
         const dataStr = JSON.stringify(technologies, null, 2);
@@ -11,20 +15,32 @@ function Settings() {
         link.href = URL.createObjectURL(dataBlob);
         link.download = 'technologies-backup.json';
         link.click();
+
+        showSnackbar('Данные успешно экспортированы!', 'success');
     };
 
     const handleClearData = () => {
         if (window.confirm('Вы уверены, что хотите удалить все данные? Это действие нельзя отменить.')) {
             localStorage.removeItem('technologies');
-            window.location.reload(); // Перезагружаем приложение
+            showSnackbar('Все данные успешно очищены', 'info');
+            setTimeout(() => window.location.reload(), 1500);
         }
     };
 
     const handleResetToDemo = () => {
         if (window.confirm('Восстановить демо-данные? Текущие данные будут потеряны.')) {
             localStorage.removeItem('technologies');
-            window.location.reload();
+            showSnackbar('Демо-данные восстановлены', 'success');
+            setTimeout(() => window.location.reload(), 1500);
         }
+    };
+
+    const handleThemeToggle = () => {
+        toggleTheme();
+        showSnackbar(
+            `Переключено на ${themeMode === 'light' ? 'тёмную' : 'светлую'} тему`,
+            'info'
+        );
     };
 
     return (
@@ -53,12 +69,22 @@ function Settings() {
 
                 <div className="setting-card">
                     <h3>Внешний вид</h3>
-                    <div className="setting-option">
-                        <label>
-                            <input type="checkbox" />
-                            Темная тема
-                        </label>
-                    </div>
+                    <Box sx={{ mb: 2 }}>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={themeMode === 'dark'}
+                                    onChange={handleThemeToggle}
+                                    color="primary"
+                                />
+                            }
+                            label={
+                                <Typography>
+                                    {themeMode === 'dark' ? '🌙 Тёмная тема' : '☀️ Светлая тема'}
+                                </Typography>
+                            }
+                        />
+                    </Box>
                     <div className="setting-option">
                         <label>
                             <input type="checkbox" defaultChecked />
@@ -73,6 +99,9 @@ function Settings() {
                         <p><strong>Трекер технологий</strong></p>
                         <p>Версия: 1.0.0</p>
                         <p>Разработано для изучения React Router</p>
+                        <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#666' }}>
+                            Использует Material-UI для улучшенного пользовательского опыта
+                        </p>
                     </div>
                 </div>
             </div>

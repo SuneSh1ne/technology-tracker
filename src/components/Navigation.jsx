@@ -1,8 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
+import { IconButton, Tooltip } from '@mui/material';
+import { Brightness4, Brightness7 } from '@mui/icons-material';
+import { useApp } from '../contexts/AppContext';
 import './Navigation.css';
 
 function Navigation() {
     const location = useLocation();
+    const { themeMode, toggleTheme } = useApp();
 
     return (
         <nav className="main-navigation">
@@ -54,6 +58,14 @@ function Navigation() {
                     </Link>
                 </li>
             </ul>
+
+            <div className="theme-toggle">
+                <Tooltip title={themeMode === 'light' ? 'Тёмная тема' : 'Светлая тема'}>
+                    <IconButton onClick={toggleTheme} color="inherit">
+                        {themeMode === 'light' ? <Brightness4 /> : <Brightness7 />}
+                    </IconButton>
+                </Tooltip>
+            </div>
         </nav>
     );
 }
