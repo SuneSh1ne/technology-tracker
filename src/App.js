@@ -1,122 +1,126 @@
-import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import TechnologyCard from './components/TechnologyCard';
-import ProgressBar from './components/ProgressBar';
-import QuickActions from './components/QuickActions';
-import FilterTabs from './components/FilterTabs';
-import TechnologyNotes from './components/TechnologyNotes';
-import useTechnologies from './hooks/useTechnologies';
+import Navigation from './components/Navigation';
+import Home from './pages/Home';
+import TechnologyList from './pages/TechnologyList';
+import TechnologyDetail from './pages/TechnologyDetail';
+import AddTechnology from './pages/AddTechnology';
+import Statistics from './pages/Statistics';
+import Settings from './pages/Settings';
+import useTechnologiesApi from './hooks/useTechnologiesApi';
 
 function App() {
-    const { technologies, updateStatus, updateNotes, progress } = useTechnologies();
+    const {
+        technologies,
+        apiData,
+        loading,
+        error,
+        updateStatus,
+        updateNotes,
+        addTechnology,
+        deleteTechnology,
+        progress,
+        importFromApi,
+        importRoadmap
+    } = useTechnologiesApi();
 
-    const markAllAsCompleted = () => {
-        technologies.forEach(tech => {
-            if (tech.status !== 'completed') {
-                updateStatus(tech.id, 'completed');
-            }
-        });
-    };
-
-    const resetAllStatuses = () => {
-        technologies.forEach(tech => {
-            updateStatus(tech.id, 'not-started');
-        });
-    };
-
-    const randomNextTechnology = () => {
-        const notStartedTech = technologies.filter(tech => tech.status === 'not-started');
-        if (notStartedTech.length > 0) {
-            const randomTech = notStartedTech[Math.floor(Math.random() * notStartedTech.length)];
-            updateStatus(randomTech.id, 'in-progress');
-        } else {
-            alert('Все технологии уже начаты или завершены!');
+    // Обработчик для импорта технологий из API
+    const handleImportTechnology = async (techData) => {
+        try {
+            await importFromApi(techData);
+        } catch (err) {
+            console.error('Ошибка импорта технологии:', err);
         }
     };
-    
-    const [activeFilter, setActiveFilter] = useState('all');
 
-    const filteredByStatus = technologies.filter(tech => {
-        switch (activeFilter) {
-            case 'not-started':
-                return tech.status === 'not-started';
-            case 'in-progress':
-                return tech.status === 'in-progress';
-            case 'completed':
-                return tech.status === 'completed';
-            default:
-                return true;
+    // Обработчик для импорта дорожной карты
+    const handleImportRoadmap = async (roadmapUrl) => {
+        try {
+            await importRoadmap(roadmapUrl);
+        } catch (err) {
+            console.error('Ошибка импорта дорожной карты:', err);
         }
-    });
+    };
 
-    const [searchQuery, setSearchQuery] = useState('');
-
-    const filteredTechnologies = filteredByStatus.filter(tech =>
-        tech.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tech.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    if (loading && technologies.length === 0) {
+        return (
+            <div className="app-loading">
+                <div className="spinner-large"></div>
+                <p>Загрузка технологий...</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="App">
-            <header className="App-header">
-                <h1>Трекер изучения технологий</h1>
-                <ProgressBar
-                    progress={progress}
-                    label="Общий прогресс"
-                    color="#4CAF50"
-                    animated={true}
-                    height={20}
-                />
-            </header>
-            <main className="App-main">
-                <QuickActions
-                    onMarkAllCompleted={markAllAsCompleted}
-                    onResetAll={resetAllStatuses}
-                    onRandomNext={randomNextTechnology}
-                    technologies={technologies}
-                />
-
-                <div className="search-box">
-                    <input
-                        type="text"
-                        placeholder="Поиск технологий..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <span>Найдено: {filteredTechnologies.length}</span>
-                </div>
-
-                <FilterTabs
-                    activeFilter={activeFilter}
-                    onFilterChange={setActiveFilter}
-                    technologies={technologies}
-                />
-
-                <div className="technologies-grid">
-                    {filteredTechnologies.map(tech => (
-                        <div key={tech.id} className="technology-item">
-                                <TechnologyCard
-                                    id={tech.id}
-                                    title={tech.title}
-                                    description={tech.description}
-                                    status={tech.status}
-                                    onStatusChange={(id) => {
-                                        const statusOrder = ['not-started', 'in-progress', 'completed'];
-                                        const currentIndex = statusOrder.indexOf(tech.status);
-                                        const nextIndex = (currentIndex + 1) % statusOrder.length;
-                                        updateStatus(id, statusOrder[nextIndex]);
-                                    }}
+        <Router>
+            <div className="App">
+                <Navigation />
+                <main className="App-main">
+                    <Routes>
+                        <Route
+                            path="/"
+                            element={
+                                <Home
+                                    technologies={technologies || []}
+                                    progress={progress}
+                                    updateStatus={updateStatus}
+                                    onImportTechnology={handleImportTechnology}
+                                    onImportRoadmap={handleImportRoadmap}
+                                    apiData={apiData}
+                                    loading={loading}
+                                    error={error}
                                 />
-                                <TechnologyNotes
-                                    notes={tech.notes}
-                                    onNotesChange={updateNotes}
-                                    techId={tech.id}
+                            }
+                        />
+                        <Route
+                            path="/technologies"
+                            element={
+                                <TechnologyList
+                                    technologies={technologies || []}
+                                    updateStatus={updateStatus}
+                                    onImportTechnology={handleImportTechnology}
+                                    loading={loading}
+                                    error={error}
                                 />
-                        </div>
-                    ))}
-                </div>
-            </main>
-        </div>
+                            }
+                        />
+                        <Route
+                            path="/technology/:techId"
+                            element={
+                                <TechnologyDetail
+                                    technologies={technologies || []}
+                                    updateStatus={updateStatus}
+                                    updateNotes={updateNotes}
+                                    deleteTechnology={deleteTechnology}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/add-technology"
+                            element={
+                                <AddTechnology
+                                    onAddTechnology={addTechnology}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/statistics"
+                            element={
+                                <Statistics
+                                    technologies={technologies || []}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/settings"
+                            element={
+                                <Settings />
+                            }
+                        />
+                    </Routes>
+                </main>
+            </div>
+        </Router>
     );
 }
 

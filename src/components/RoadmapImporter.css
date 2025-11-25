@@ -1,0 +1,108 @@
+.roadmap-importer {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+}
+
+.importer-description {
+    color: #6c757d;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.import-actions {
+    margin-bottom: 20px;
+}
+
+.import-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.import-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.import-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.custom-import {
+    border-top: 1px solid #e9ecef;
+    padding-top: 20px;
+}
+
+.custom-import h4 {
+    margin-bottom: 12px;
+    color: #495057;
+    font-size: 16px;
+}
+
+.url-input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.url-input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.url-input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.url-import-button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.url-import-button:hover:not(:disabled) {
+    background: #218838;
+}
+
+.url-import-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.import-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 12px;
+    background: #e7f3ff;
+    border-radius: 6px;
+}
+
+.progress-spinner {
+    border: 2px solid #b8daff;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}

@@ -1,56 +1,21 @@
 import './ProgressHeader.css';
 
-function ProgressHeader({ technologies }) {
-    const totalTechnologies = technologies.length;
-    const completedTechnologies = technologies.filter(tech => tech.status === 'completed').length;
-    const inProgressTechnologies = technologies.filter(tech => tech.status === 'in-progress').length;
-    const notStartedTechnologies = technologies.filter(tech => tech.status === 'not-started').length;
-
-    const progressPercentage = totalTechnologies > 0
-        ? Math.round((completedTechnologies / totalTechnologies) * 100)
-        : 0;
-
-    const getProgressLevel = () => {
-        if (progressPercentage >= 80) return 'high';
-        if (progressPercentage >= 50) return 'medium';
-        return 'low';
-    };
+function ProgressHeader({ progress = 0, total = 0 }) {
+    const safeProgress = Math.max(0, Math.min(100, progress || 0));
+    const safeTotal = total || 0;
 
     return (
         <div className="progress-header">
-            <div className="progress-header__stats">
-                <div className="progress-stat">
-                    <span className="progress-stat__value">{totalTechnologies}</span>
-                    <span className="progress-stat__label">Всего технологий</span>
+            <h1>Трекер изучения технологий</h1>
+            <div className="progress-info">
+                <div className="progress-stats">
+                    <span className="progress-percent">{safeProgress}%</span>
+                    <span className="progress-text">
+                        Изучено технологий: {safeTotal > 0 ? Math.round((safeTotal * safeProgress) / 100) : 0} из {safeTotal}
+                    </span>
                 </div>
-                <div className="progress-stat">
-                    <span className="progress-stat__value">{completedTechnologies}</span>
-                    <span className="progress-stat__label">Изучено</span>
-                </div>
-                <div className="progress-stat">
-                    <span className="progress-stat__value">{inProgressTechnologies}</span>
-                    <span className="progress-stat__label">В процессе</span>
-                </div>
-                <div className="progress-stat">
-                    <span className="progress-stat__value">{notStartedTechnologies}</span>
-                    <span className="progress-stat__label">Не начато</span>
-                </div>
-                <div className="progress-stat">
-                    <span className="progress-stat__value">{progressPercentage}%</span>
-                    <span className="progress-stat__label">Прогресс</span>
-                </div>
-            </div>
-
-            <div className="progress-bar">
-                <div className="progress-bar__info">
-                    <span>Общий прогресс изучения</span>
-                    <span>{progressPercentage}%</span>
-                </div>
-                <div className="progress-bar__container">
-                    <div
-                        className={`progress-bar__fill progress-bar__fill--${getProgressLevel()}`}
-                        style={{ width: `${progressPercentage}%` }}
-                    ></div>
+                <div className="progress-bar-container">
+                    <div className="progress-bar" style={{ width: `${safeProgress}%` }}></div>
                 </div>
             </div>
         </div>
